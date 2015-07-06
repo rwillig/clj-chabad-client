@@ -13,7 +13,7 @@
 
 (defn hmacSha1 
   "get HmacSha1 of phrase using secret. 
-  Expect secret to base64 decoded"
+  Expect secret to be base64 decoded"
   [phrase secret]
   (let [key-spec (SecretKeySpec. secret "HmacSHA1")
         mac (Mac/getInstance "HmacSHA1")
@@ -30,7 +30,9 @@
  expects secret in base64 encoded format"
   [{:keys [public user timestamp route secret]}]
   (let [secret    (prepare-secret secret)
-        phrase    (join "|" (filter identity [public user timestamp route]))
-        signature (hmacSha1 phrase secret)]
-    (str "h=" phrase "; s=" signature)))
+        to-sign   (join "|" (filter identity [public user timestamp route]))
+        header    (join "|" (filter identity [public user timestamp]))
+        signature (hmacSha1 to-sign secret)]
+    (println to-sign)
+    (str "h=" header"; s=" signature)))
 
